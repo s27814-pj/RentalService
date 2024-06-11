@@ -6,32 +6,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
+import java.net.ConnectException;
 import java.util.NoSuchElementException;
 
 @org.springframework.web.bind.annotation.RestControllerAdvice
 public class RestControllerAdvice {
 
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    ErrorResponse entityNotFoundHandler(EntityNotFoundException ex){
-        return getErrorResponse(ex, "No item found.");
-
-        public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    @ExceptionHandler
+    public ResponseEntity<String> handleHttpClientErrorException$NotFound(HttpClientErrorException.NotFound exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404 not found");
     }
 
-        @ExceptionHandler(value = {ResourceNotFoundException.class, CertainException.class})
-        @ResponseStatus(value = HttpStatus.NOT_FOUND)
-        public ErrorMessage resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-            ErrorMessage message = new ErrorMessage(
-                    status,
-                    date,
-                    ex.getMessage(),
-                    description);
+    @ExceptionHandler
+    public ResponseEntity<String> handleHttpClientErrorException$BadRequest(HttpClientErrorException.BadRequest exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("400 Bad_Request");
+    }
 
-            return message;
-        }
+    @ExceptionHandler
+    public ResponseEntity<String> handleHttpServerErrorException$InternalServerError(HttpServerErrorException.InternalServerError exception) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("502 Bad_Gateway");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleConnectException(ConnectException exception) {
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("no connection");
+    }
+
+
+
 
 }

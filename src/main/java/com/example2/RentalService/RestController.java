@@ -26,14 +26,20 @@ public class RestController {
 
         return ResponseEntity.ok(rentalService.getMovie(id));
     }
-    @GetMapping("/returnMovie")
+    @PutMapping("/returnMovie")
     public ResponseEntity<Movie> returnMovie(@RequestParam Long id){
 
         return ResponseEntity.ok(rentalService.returnMovie(id));
     }
-    @GetMapping("/rentMovie")
+    @PostMapping("/rentMovie")
     public ResponseEntity<Movie> rentMovie(@RequestParam Long id){
         return ResponseEntity.ok(rentalService.rentMovie(id));
+    }
+    @GetMapping("/get500")
+    public ResponseEntity<Exception> get500(){
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Exception> mov = restTemplate.getForObject("http://localhost:8080/throw500", ResponseEntity.class);
+        return mov;
     }
 
 }
